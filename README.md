@@ -1,56 +1,63 @@
-# NLS Khatabook Android conversion
+# NLS Bill Android wrapper
 
-This repository keeps the original single-page ledger app and wraps it in Capacitor for Android use.
+This repository keeps the original static billing and ledger app and wraps it in Capacitor for Android packaging.
 
-## Current web app
-- The working app is in `index.html`.
-- It preserves the original ledger calculations: Total Credit, Total Debit, Net Balance, and running ledger balance.
-- Entries are stored in `localStorage` with the key `nls-khatabook-entries-v1`, so data survives app reloads and restarts on the same device.
+## What the app does
+- The working site remains in `index.html` and is copied to `public/index.html` for packaging.
+- The billing, customer, item, and ledger logic is preserved.
+- User data is stored in the browser's `localStorage` on the Android device. It is not synced to a server, and there is no server-side backup.
 
-## Android packaging
-The project is set up for Capacitor + Android with the app name `NLS Khatabook` and package ID `com.trendkneeng.nlskhatabook`.
+## Android package configuration
+- App ID: `com.nlsbill.app`
+- App name: `NLS Bill`
+- Web asset directory: `public`
+- Capacitor config: `capacitor.config.ts`
 
-## Local setup
+## Local development
 1. Install Node.js LTS.
 2. Run:
    ```bash
    npm install
    npm run build:web
+   npx cap add android
    npx cap sync android
    ```
-3. Open Android Studio and select `android/` to continue with the project.
+3. Open Android Studio on the generated `android/` project to run and debug the app on a phone.
 
-## Create a signed release APK
-1. Create a keystore file on your machine.
-2. Add `android/key.properties` with values for:
-   - `storePassword`
-   - `keyPassword`
-   - `keyAlias`
-   - `storeFile`
-3. Then run:
-   ```bash
-   cd android
-   gradle assembleRelease
-   ```
-4. The APK will be output at `android/app/build/outputs/apk/release/app-release.apk`.
+## Build a debug APK locally
+```bash
+npm install
+npm run build:web
+npx cap add android
+npx cap sync android
+cd android
+./gradlew assembleDebug
+```
 
-## GitHub Actions build
-A workflow is included at `.github/workflows/android-release.yml`.
+The APK will be output at:
+`android/app/build/outputs/apk/debug/app-debug.apk`
 
-It expects the following GitHub repository secrets:
-- `ANDROID_KEYSTORE_BASE64`
-- `RELEASE_KEY_ALIAS`
-- `RELEASE_KEY_PASSWORD`
-- `RELEASE_STORE_PASSWORD`
+## GitHub Actions APK build
+A workflow is included at `.github/workflows/android-apk.yml`.
 
-The workflow decodes the keystore, generates `android/key.properties`, and builds the release APK automatically.
+It runs on:
+- manual dispatch (`workflow_dispatch`)
+- pushes to `main`
 
-## Install the APK on your phone
-1. Copy the generated APK to your phone.
-2. Open the APK file on the phone and allow installation.
-3. If Android warns about unknown sources, enable installation from that source.
+It will:
+- install dependencies
+- build the web app
+- generate the Android project via Capacitor
+- run `./gradlew assembleDebug`
+- upload the APK as the artifact `NLS-Bill-debug-APK`
+
+## Install on your Android phone
+1. Download the APK from the workflow artifact.
+2. Copy it to your phone.
+3. Open the APK on the phone.
+4. Allow installation from the browser or file manager when prompted.
 
 ## Important notes
-- No API keys or secrets are stored in the repository.
-- The app uses WebView and does not require opening Chrome manually.
-- The app data is kept in the device's local storage, which survives restarts on the same device.
+- No passwords, API keys, or private customer data are stored in this repository.
+- The app remains a local browser app; there is no server-backed sync or backup.
+- Existing billing and ledger features are intentionally preserved without creating a separate backend application.
