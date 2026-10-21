@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NLS Khatabook</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --primary: #1f6feb;
+      --primary-soft: #eaf2ff;
+      --text: #1d2433;
+      --muted: #687385;
+      --success: #1d9d61;
+      --danger: #d94a4a;
+      --border: #dfe6f1;
+      --shadow: 0 12px 28px rgba(20, 28, 45, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1d4ed8, #2563eb);
+      color: white;
+      padding: 24px 28px;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      opacity: 0.9;
+    }
+
+    .meta-box {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 10px 14px;
+      border-radius: 12px;
+      min-width: 180px;
+    }
+
+    .meta-box small {
+      display: block;
+      opacity: 0.8;
+      margin-bottom: 4px;
+    }
+
+    .meta-box strong {
+      font-size: 1.4rem;
+    }
+
+    .summary {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      margin: 0 0 12px;
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .amount {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .amount.income { color: var(--success); }
+    .amount.expense { color: var(--danger); }
+    .amount.balance { color: var(--primary); }
+
+    .content {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 22px;
+    }
+
+    .form-panel, .table-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .form-panel h2, .table-panel h2 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 1.3rem;
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.12);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .btn.primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn.secondary {
+      background: #edf3ff;
+      color: var(--primary);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    th {
+      color: var(--muted);
+      background: #f8fafc;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .status {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      display: inline-block;
+    }
+
+    .status.credit {
+      background: #e8faf1;
+      color: var(--success);
+    }
+
+    .status.debit {
+      background: #fdeceb;
+      color: var(--danger);
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 24px 10px;
+    }
+
+    @media (max-width: 820px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .header {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="brand">
+        <h1>NLS Khatabook</h1>
+        <p>Daily account ledger</p>
+      </div>
+
+      <div class="meta-box">
+        <small>Current Balance</small>
+        <strong id="currentBalance">₹0.00</strong>
+      </div>
+    </header>
+
+    <section class="summary">
+      <div class="card">
+        <h3>Total Credit</h3>
+        <p class="amount income" id="totalCredit">₹0.00</p>
+      </div>
+
+      <div class="card">
+        <h3>Total Debit</h3>
+        <p class="amount expense" id="totalDebit">₹0.00</p>
+      </div>
+
+      <div class="card">
+        <h3>Net Balance</h3>
+        <p class="amount balance" id="netBalance">₹0.00</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <aside class="form-panel">
+        <h2>Add Entry</h2>
+
+        <form id="entryForm">
+          <div class="field">
+            <label for="date">Date</label>
+            <input type="date" id="date" required />
+          </div>
+
+          <div class="field">
+            <label for="name">Customer / Party</label>
+            <input type="text" id="name" placeholder="e.g. Raj Verma" required />
+          </div>
+
+          <div class="field">
+            <label for="particulars">Particulars</label>
+            <input type="text" id="particulars" placeholder="e.g. Goods sold" required />
+          </div>
+
+          <div class="field">
+            <label for="type">Type</label>
+            <select id="type" required>
+              <option value="credit">Credit</option>
+              <option value="debit">Debit</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="amount">Amount</label>
+            <input type="number" id="amount" min="0" step="0.01" placeholder="0.00" required />
+          </div>
+
+          <div class="buttons">
+            <button type="submit" class="btn primary">Save Entry</button>
+            <button type="reset" class="btn secondary">Reset</button>
+          </div>
+        </form>
+      </aside>
+
+      <div class="table-panel">
+        <h2>Ledger Entries</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Party</th>
+              <th>Particulars</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody id="ledgerBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const entries = [
+      { date: "2026-10-01", name: "Raj Verma", particulars: "Opening balance", type: "credit", amount: 2500 },
+      { date: "2026-10-03", name: "Sonia Patel", particulars: "Rice supply", type: "debit", amount: 1200 },
+      { date: "2026-10-06", name: "Amit Sharma", particulars: "Payment received", type: "credit", amount: 800 }
+    ];
+
+    const ledgerBody = document.getElementById("ledgerBody");
+    const form = document.getElementById("entryForm");
+
+    function formatCurrency(value) {
+      return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        minimumFractionDigits: 2
+      }).format(value);
+    }
+
+    function calculateTotals() {
+      let totalCredit = 0;
+      let totalDebit = 0;
+
+      entries.forEach(entry => {
+        if (entry.type === "credit") totalCredit += Number(entry.amount);
+        else totalDebit += Number(entry.amount);
+      });
+
+      const netBalance = totalCredit - totalDebit;
+      document.getElementById("totalCredit").textContent = formatCurrency(totalCredit);
+      document.getElementById("totalDebit").textContent = formatCurrency(totalDebit);
+      document.getElementById("netBalance").textContent = formatCurrency(netBalance);
+      document.getElementById("currentBalance").textContent = formatCurrency(netBalance);
+    }
+
+    function renderTable() {
+      ledgerBody.innerHTML = "";
+
+      if (entries.length === 0) {
+        ledgerBody.innerHTML = '<tr><td colspan="6" class="empty">No entries yet.</td></tr>';
+        calculateTotals();
+        return;
+      }
+
+      let runningBalance = 0;
+
+      entries.forEach(entry => {
+        runningBalance += entry.type === "credit" ? Number(entry.amount) : -Number(entry.amount);
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${entry.date}</td>
+          <td>${entry.name}</td>
+          <td>${entry.particulars}</td>
+          <td><span class="status ${entry.type === "credit" ? "credit" : "debit"}">${entry.type === "credit" ? "Credit" : "Debit"}</span></td>
+          <td>${formatCurrency(Number(entry.amount))}</td>
+          <td>${formatCurrency(runningBalance)}</td>
+        `;
+
+        ledgerBody.appendChild(row);
+      });
+
+      calculateTotals();
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const newEntry = {
+        date: document.getElementById("date").value,
+        name: document.getElementById("name").value.trim(),
+        particulars: document.getElementById("particulars").value.trim(),
+        type: document.getElementById("type").value,
+        amount: Number(document.getElementById("amount").value)
+      };
+
+      if (!newEntry.date || !newEntry.name || !newEntry.particulars || !newEntry.amount) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      entries.unshift(newEntry);
+      form.reset();
+      document.getElementById("date").valueAsDate = new Date();
+      renderTable();
+    });
+
+    document.getElementById("date").valueAsDate = new Date();
+    renderTable();
+  </script>
+</body>
+</html>
