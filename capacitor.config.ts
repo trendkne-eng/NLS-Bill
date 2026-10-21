@@ -1,10 +1,13 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.trendkneeng.nlskhatabook',
-  appName: 'NLS Khatabook',
+  appId: 'com.nlsbill.app',
+  appName: 'NLS Bill',
   webDir: 'public',
   bundledWebRuntime: false,
+  server: {
+    androidScheme: 'https'
+  },
   android: {
     allowMixedContent: true,
     captureInput: true
