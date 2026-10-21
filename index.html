@@ -3,20 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#1d4ed8" />
-  <title>NLS Khatabook</title>
+  <meta name="theme-color" content="#0f172a" />
+  <title>Nova Lite Solution</title>
   <style>
     :root {
-      --bg: #f5f7fb;
+      --bg: #f4f7fb;
       --panel: #ffffff;
-      --primary: #1f6feb;
-      --primary-soft: #eaf2ff;
-      --text: #1d2433;
-      --muted: #687385;
-      --success: #1d9d61;
-      --danger: #d94a4a;
-      --border: #dfe6f1;
-      --shadow: 0 12px 28px rgba(20, 28, 45, 0.08);
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --secondary: #f59e0b;
+      --accent: #1d4ed8;
+      --text: #10233a;
+      --muted: #5b6678;
+      --border: #dfe7f1;
+      --success: #08916b;
+      --danger: #dc2626;
+      --warning: #f97316;
+      --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
     }
 
     * { box-sizing: border-box; }
@@ -25,473 +29,1913 @@
       margin: 0;
       min-height: 100%;
       font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 100%);
+      background: linear-gradient(180deg, #ecfdf5 0%, var(--bg) 100%);
       color: var(--text);
       -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      padding: max(16px, env(safe-area-inset-top)) 12px max(24px, env(safe-area-inset-bottom));
+      padding: max(18px, env(safe-area-inset-top)) 12px max(24px, env(safe-area-inset-bottom));
     }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
 
     .container {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 10px 0 0;
     }
 
-    .header {
-      background: linear-gradient(135deg, #1d4ed8, #2563eb);
-      color: white;
-      padding: 22px 18px;
-      border-radius: 18px;
-      box-shadow: var(--shadow);
+    .auth-shell {
+      min-height: 100vh;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
+      justify-content: center;
+      padding: 30px 16px;
     }
 
-    .brand h1 {
-      margin: 0;
-      font-size: clamp(1.7rem, 4vw, 2.2rem);
-      line-height: 1.2;
-    }
-
-    .brand p {
-      margin: 6px 0 0;
-      opacity: 0.9;
-      font-size: 0.95rem;
-    }
-
-    .meta-box {
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.15);
-      padding: 10px 14px;
-      border-radius: 12px;
-      min-width: 180px;
-    }
-
-    .meta-box small {
-      display: block;
-      opacity: 0.8;
-      margin-bottom: 4px;
-      font-size: 0.75rem;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-    }
-
-    .meta-box strong {
-      font-size: clamp(1.2rem, 3vw, 1.6rem);
-      display: block;
-    }
-
-    .summary {
-      margin-top: 18px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 14px;
-    }
-
-    .card {
+    .auth-box {
+      width: min(100%, 500px);
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px 20px;
+      border-radius: 26px;
       box-shadow: var(--shadow);
+      overflow: hidden;
     }
 
-    .card h3 {
-      margin: 0 0 10px;
-      font-size: 0.9rem;
-      color: var(--muted);
-      font-weight: 700;
+    .auth-header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 28px 24px 20px;
+      text-align: center;
+    }
+
+    .auth-header h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 2.6rem);
       letter-spacing: 0.02em;
     }
 
-    .amount {
-      font-size: clamp(1.3rem, 4vw, 1.9rem);
-      font-weight: bold;
-      margin: 0;
-      word-break: break-word;
+    .auth-header p {
+      margin: 8px 0 0;
+      opacity: 0.95;
+      font-size: 0.96rem;
     }
 
-    .amount.income { color: var(--success); }
-    .amount.expense { color: var(--danger); }
-    .amount.balance { color: var(--primary); }
-
-    .content {
-      margin-top: 20px;
+    .auth-tabs {
       display: grid;
-      grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
-      gap: 18px;
-      align-items: start;
+      grid-template-columns: 1fr 1fr;
+      padding: 8px;
+      gap: 8px;
+      background: #eef8f6;
+      margin: 12px;
+      border-radius: 14px;
     }
 
-    .form-panel, .table-panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      padding: 18px;
+    .auth-tab {
+      border: none;
+      background: transparent;
+      min-height: 46px;
+      border-radius: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
     }
 
-    .form-panel h2, .table-panel h2 {
-      margin-top: 0;
-      margin-bottom: 16px;
-      font-size: clamp(1.2rem, 3vw, 1.5rem);
+    .auth-tab.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 4px 14px rgba(15, 118, 110, 0.12);
     }
 
-    form {
+    .auth-panel {
+      padding: 18px 18px 24px;
+    }
+
+    .auth-panel form {
       display: grid;
       gap: 14px;
     }
 
     .field {
       display: grid;
-      gap: 7px;
+      gap: 8px;
     }
 
-    label {
-      font-size: 0.9rem;
+    .field label {
+      font-size: 0.85rem;
       font-weight: 700;
       color: var(--muted);
     }
 
-    input, select, button {
+    .field input, .field textarea, .field select {
       width: 100%;
       min-height: 48px;
       padding: 12px 14px;
-      border: 1px solid var(--border);
       border-radius: 12px;
-      font-size: 1rem;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
       outline: none;
-      transition: 0.2s ease;
-      background: #fff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-    input:focus, select:focus {
+    .field textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .field input:focus, .field textarea:focus, .field select:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.12);
-    }
-
-    .buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: 4px;
-      width: 100%;
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
     }
 
     .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
       border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
       cursor: pointer;
       font-weight: 700;
-      min-height: 48px;
-      touch-action: manipulation;
+      transition: transform 0.15s ease, opacity 0.15s ease;
     }
 
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
     .btn.primary {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white;
-      box-shadow: 0 10px 18px rgba(31, 111, 235, 0.18);
+      box-shadow: 0 12px 18px rgba(15, 118, 110, 0.18);
     }
 
     .btn.secondary {
-      background: #edf3ff;
+      background: #edf6f5;
       color: var(--primary);
+      border: 1px solid #d8efeb;
+    }
+
+    .btn.warn {
+      background: #fff1e7;
+      color: var(--warning);
+      border: 1px solid #f9d6b3;
+    }
+
+    .btn.danger {
+      background: #fee2e2;
+      color: var(--danger);
+      border: 1px solid #fecaca;
+    }
+
+    .btn.small {
+      min-height: 38px;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .toolbar .left,
+    .toolbar .right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #edf6f5;
+      color: var(--primary);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .app-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      box-shadow: var(--shadow);
+      border-radius: 20px;
+      padding: 18px 20px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .brand-box h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      line-height: 1.2;
+    }
+
+    .brand-box p {
+      margin: 6px 0 0;
+      opacity: 0.86;
+      font-size: 0.92rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(110px, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .nav-btn {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      min-height: 52px;
+      border-radius: 14px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border-color: transparent;
+    }
+
+    .view {
+      display: none;
+      min-height: 500px;
+    }
+
+    .view.active { display: block; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px 18px;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .amount {
+      margin: 0;
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      font-weight: 800;
+      word-break: break-word;
+    }
+
+    .amount.green { color: var(--success); }
+    .amount.red { color: var(--danger); }
+    .amount.blue { color: var(--accent); }
+    .amount.orange { color: var(--warning); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .panel h2, .panel h3 {
+      margin-top: 0;
+    }
+
+    .panel h2 {
+      margin-bottom: 16px;
+      font-size: clamp(1.3rem, 3vw, 1.7rem);
+    }
+
+    .stack,
+    .form-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
     }
 
     .table-wrap {
       width: 100%;
       overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
     }
 
     table {
       width: 100%;
-      min-width: 620px;
       border-collapse: collapse;
-      margin-top: 8px;
+      min-width: 680px;
     }
 
     th, td {
       padding: 12px 10px;
       border-bottom: 1px solid var(--border);
       text-align: left;
-      font-size: 0.94rem;
       vertical-align: top;
+      font-size: 0.92rem;
       word-break: break-word;
     }
 
     th {
-      color: var(--muted);
       background: #f8fafc;
-      font-size: 0.77rem;
+      color: var(--muted);
+      font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       white-space: nowrap;
     }
 
     .status {
+      display: inline-block;
       padding: 6px 10px;
       border-radius: 999px;
+      font-size: 0.77rem;
       font-weight: 700;
-      font-size: 0.75rem;
-      display: inline-block;
+      white-space: nowrap;
     }
 
-    .status.credit {
-      background: #e8faf1;
-      color: var(--success);
-    }
+    .status.paid { background: #dcfce7; color: var(--success); }
+    .status.partial { background: #fff7ed; color: var(--warning); }
+    .status.unpaid { background: #fee2e2; color: var(--danger); }
 
-    .status.debit {
-      background: #fdeceb;
+    .due-red {
       color: var(--danger);
+      font-weight: 800;
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .search-box input {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 14px 12px 42px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: white;
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+    }
+
+    .search-box::before {
+      content: "🔎";
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.7;
+      font-size: 1rem;
+    }
+
+    .list-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .list-item {
+      border: 1px solid var(--border);
+      background: #fbfdff;
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .list-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #dfe7f1;
+      background: #eef2ff;
+    }
+
+    .product-card {
+      display: grid;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      padding: 12px;
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #eef2ff;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .bill-item-row {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .tiny {
+      font-size: 0.75rem;
+      color: var(--muted);
     }
 
     .empty {
-      text-align: center;
       color: var(--muted);
-      padding: 26px 10px;
+      padding: 18px 10px;
+      text-align: center;
       font-style: italic;
     }
 
-    @media (max-width: 820px) {
-      .content {
+    .hidden { display: none !important; }
+
+    @media (max-width: 860px) {
+      .layout {
         grid-template-columns: 1fr;
       }
 
-      .header {
-        align-items: flex-start;
+      .nav {
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
       }
     }
 
-    @media (max-width: 480px) {
-      .buttons {
-        flex-direction: column;
+    @media (max-width: 560px) {
+      .two-col {
+        grid-template-columns: 1fr;
       }
 
-      .container {
-        padding-top: 0;
+      .toolbar {
+        align-items: flex-start;
       }
 
-      .form-panel, .table-panel, .header, .card {
-        border-radius: 14px;
+      .app-header {
+        border-radius: 16px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <div class="brand">
-        <h1>NLS Khatabook</h1>
-        <p>Daily account ledger</p>
-      </div>
+  <div id="authScreen" class="screen active">
+    <div class="auth-shell">
+      <div class="auth-box">
+        <div class="auth-header">
+          <h1>Nova Lite</h1>
+          <p>Shop Management & Billing</p>
+        </div>
 
-      <div class="meta-box">
-        <small>Current Balance</small>
-        <strong id="currentBalance">₹0.00</strong>
-      </div>
-    </header>
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-auth-tab="login">Login</button>
+          <button class="auth-tab" data-auth-tab="register">Register</button>
+        </div>
 
-    <section class="summary">
-      <div class="card">
-        <h3>Total Credit</h3>
-        <p class="amount income" id="totalCredit">₹0.00</p>
-      </div>
+        <div class="auth-panel">
+          <form id="loginForm" class="auth-form active">
+            <div class="field">
+              <label for="loginMobile">Mobile Number</label>
+              <input id="loginMobile" type="tel" placeholder="9876543210" required />
+            </div>
 
-      <div class="card">
-        <h3>Total Debit</h3>
-        <p class="amount expense" id="totalDebit">₹0.00</p>
-      </div>
+            <div class="field">
+              <label for="loginPassword">Password</label>
+              <input id="loginPassword" type="password" placeholder="Enter password" required />
+            </div>
 
-      <div class="card">
-        <h3>Net Balance</h3>
-        <p class="amount balance" id="netBalance">₹0.00</p>
-      </div>
-    </section>
+            <button type="submit" class="btn primary">Login</button>
+          </form>
 
-    <section class="content">
-      <aside class="form-panel">
-        <h2>Add Entry</h2>
+          <form id="registerForm" class="auth-form hidden" autocomplete="off">
+            <div class="field">
+              <label for="registerName">Your Name</label>
+              <input id="registerName" type="text" placeholder="Enter your name" required />
+            </div>
 
-        <form id="entryForm">
-          <div class="field">
-            <label for="date">Date</label>
-            <input type="date" id="date" required />
-          </div>
+            <div class="field">
+              <label for="registerShopName">Shop Name</label>
+              <input id="registerShopName" type="text" placeholder="Nova Lite Solution" required />
+            </div>
 
-          <div class="field">
-            <label for="name">Customer / Party</label>
-            <input type="text" id="name" placeholder="e.g. Raj Verma" required />
-          </div>
+            <div class="field">
+              <label for="registerMobile">Mobile Number</label>
+              <input id="registerMobile" type="tel" placeholder="9876543210" required />
+            </div>
 
-          <div class="field">
-            <label for="particulars">Particulars</label>
-            <input type="text" id="particulars" placeholder="e.g. Goods sold" required />
-          </div>
+            <div class="field">
+              <label for="registerAddress">Address</label>
+              <textarea id="registerAddress" placeholder="Enter shop address" required></textarea>
+            </div>
 
-          <div class="field">
-            <label for="type">Type</label>
-            <select id="type" required>
-              <option value="credit">Credit</option>
-              <option value="debit">Debit</option>
-            </select>
-          </div>
+            <div class="field">
+              <label for="registerPassword">Password</label>
+              <input id="registerPassword" type="password" placeholder="Create password" required />
+            </div>
 
-          <div class="field">
-            <label for="amount">Amount</label>
-            <input type="number" id="amount" min="0" step="0.01" placeholder="0.00" required />
-          </div>
-
-          <div class="buttons">
-            <button type="submit" class="btn primary">Save Entry</button>
-            <button type="reset" class="btn secondary">Reset</button>
-          </div>
-        </form>
-      </aside>
-
-      <div class="table-panel">
-        <h2>Ledger Entries</h2>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Party</th>
-                <th>Particulars</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Balance</th>
-              </tr>
-            </thead>
-            <tbody id="ledgerBody"></tbody>
-          </table>
+            <button type="submit" class="btn primary">Create Account</button>
+          </form>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+
+  <div id="mainScreen" class="screen">
+    <div class="container">
+      <header class="app-header">
+        <div class="brand-box">
+          <h1 id="shopNameHeader">Nova Lite Solution</h1>
+          <p id="shopWelcomeText">Daily shop dashboard</p>
+        </div>
+
+        <div class="header-actions">
+          <div class="pill" id="activeUserPill">Shop Owner</div>
+          <button id="logoutBtn" class="btn secondary small">Logout</button>
+        </div>
+      </header>
+
+      <nav class="nav" aria-label="Main navigation">
+        <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+        <button class="nav-btn" data-view="customers">Customers</button>
+        <button class="nav-btn" data-view="items">Items</button>
+        <button class="nav-btn" data-view="bills">Bills</button>
+        <button class="nav-btn" data-view="legacy">Legacy</button>
+      </nav>
+
+      <section id="dashboardView" class="view active">
+        <div class="summary">
+          <div class="card">
+            <h3>Total Sales</h3>
+            <p id="totalSales" class="amount green">₹0.00</p>
+          </div>
+
+          <div class="card">
+            <h3>Total Dues</h3>
+            <p id="totalDues" class="amount red">₹0.00</p>
+          </div>
+
+          <div class="card">
+            <h3>Customers</h3>
+            <p id="customerCount" class="amount blue">0</p>
+          </div>
+
+          <div class="card">
+            <h3>Items</h3>
+            <p id="itemCount" class="amount orange">0</p>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="left">
+            <div class="pill">Search customers</div>
+          </div>
+        </div>
+
+        <div class="search-box">
+          <input id="customerSearch" type="search" placeholder="Search by customer name or mobile number" />
+        </div>
+
+        <div class="list-grid" id="dashboardCustomerList"></div>
+      </section>
+
+      <section id="customersView" class="view">
+        <div class="layout">
+          <aside class="panel">
+            <h2>Customer</h2>
+            <div class="stack">
+              <div class="field">
+                <label for="customerName">Name</label>
+                <input id="customerName" type="text" placeholder="Customer name" />
+              </div>
+
+              <div class="field">
+                <label for="customerPhone">Mobile Number</label>
+                <input id="customerPhone" type="tel" placeholder="9876543210" />
+              </div>
+
+              <div class="field">
+                <label for="customerAddress">Address</label>
+                <textarea id="customerAddress" placeholder="Customer address"></textarea>
+              </div>
+
+              <div class="row-actions">
+                <button id="saveCustomerBtn" class="btn primary">Save Customer</button>
+                <button id="resetCustomerBtn" class="btn secondary">Reset</button>
+              </div>
+            </div>
+          </aside>
+
+          <div class="panel">
+            <h2>Customer Ledger</h2>
+            <div id="customerList" class="list-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="itemsView" class="view">
+        <div class="layout">
+          <aside class="panel">
+            <h2>Add Item</h2>
+            <div class="stack">
+              <div class="field">
+                <label for="itemName">Product Name</label>
+                <input id="itemName" type="text" placeholder="e.g. Rice Bag" />
+              </div>
+
+              <div class="field">
+                <label for="itemPhoto">Photo</label>
+                <input id="itemPhoto" type="file" accept="image/*" />
+              </div>
+
+              <div class="two-col">
+                <div class="field">
+                  <label for="itemStock">Stock</label>
+                  <input id="itemStock" type="number" min="0" step="1" value="0" />
+                </div>
+
+                <div class="field">
+                  <label for="itemPurchasePrice">Purchase Price</label>
+                  <input id="itemPurchasePrice" type="number" min="0" step="0.01" value="0" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="itemSalePrice">Sale Price</label>
+                <input id="itemSalePrice" type="number" min="0" step="0.01" value="0" />
+              </div>
+
+              <div class="row-actions">
+                <button id="saveItemBtn" class="btn primary">Save Item</button>
+                <button id="resetItemBtn" class="btn secondary">Reset</button>
+              </div>
+            </div>
+          </aside>
+
+          <div class="panel">
+            <h2>Inventory</h2>
+            <div id="itemList" class="product-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="billsView" class="view">
+        <div class="layout">
+          <aside class="panel">
+            <h2 id="billFormHeading">New Bill</h2>
+            <div class="stack">
+              <div class="field">
+                <label for="billCustomerSelect">Customer</label>
+                <select id="billCustomerSelect"></select>
+              </div>
+
+              <div class="two-col">
+                <div class="field">
+                  <label for="billItemSelect">Item</label>
+                  <select id="billItemSelect"></select>
+                </div>
+
+                <div class="field">
+                  <label for="billQty">Quantity</label>
+                  <input id="billQty" type="number" min="1" step="1" value="1" />
+                </div>
+              </div>
+
+              <button id="addBillItemBtn" class="btn secondary">Add to Bill</button>
+
+              <div id="billItemsContainer" class="list-grid"></div>
+
+              <div class="field">
+                <label for="billNote">Notes</label>
+                <textarea id="billNote" placeholder="Order notes"></textarea>
+              </div>
+
+              <div class="two-col">
+                <div class="field">
+                  <label for="billPaidAmount">Amount Paid</label>
+                  <input id="billPaidAmount" type="number" min="0" step="0.01" value="0" />
+                </div>
+
+                <div class="field">
+                  <label for="billDate">Bill Date</label>
+                  <input id="billDate" type="date" />
+                </div>
+              </div>
+
+              <div class="card" style="padding: 12px;">
+                <div class="tiny">Subtotal: <strong id="billSubtotal">₹0.00</strong></div>
+                <div class="tiny" style="margin-top: 6px;">Due: <strong id="billDue" class="due-red">₹0.00</strong></div>
+              </div>
+
+              <div class="row-actions">
+                <button id="saveBillBtn" class="btn primary">Save Bill</button>
+                <button id="cancelBillBtn" class="btn secondary">Cancel</button>
+              </div>
+            </div>
+          </aside>
+
+          <div class="panel">
+            <h2>Bill History</h2>
+            <div id="billList" class="list-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="legacyView" class="view">
+        <div class="panel">
+          <h2>Legacy Ledger Data</h2>
+          <p class="tiny">Your existing local ledger entries are preserved and shown here.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Party</th>
+                  <th>Particulars</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Balance</th>
+                </tr>
+              </thead>
+              <tbody id="legacyLedgerBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
 
   <script>
-    const STORAGE_KEY = "nls-khatabook-entries-v1";
-    const defaultEntries = [
-      { date: "2026-10-01", name: "Raj Verma", particulars: "Opening balance", type: "credit", amount: 2500 },
-      { date: "2026-10-03", name: "Sonia Patel", particulars: "Rice supply", type: "debit", amount: 1200 },
-      { date: "2026-10-06", name: "Amit Sharma", particulars: "Payment received", type: "credit", amount: 800 }
-    ];
+    const STORAGE_KEYS = {
+      profile: "nls-nova-profile-v1",
+      customers: "nls-nova-customers-v1",
+      items: "nls-nova-items-v1",
+      bills: "nls-nova-bills-v1",
+      legacy: "nls-khatabook-entries-v1",
+      migration: "nls-nova-migration-v1"
+    };
 
-    const ledgerBody = document.getElementById("ledgerBody");
-    const form = document.getElementById("entryForm");
+    const state = {
+      profile: null,
+      customers: [],
+      items: [],
+      bills: [],
+      legacyEntries: [],
+      currentView: "dashboard",
+      selectedCustomerId: null,
+      editingBillId: null,
+      draftBillItems: []
+    };
 
-    function loadEntries() {
-      try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (!saved) {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultEntries));
-          return [...defaultEntries];
-        }
+    const app = {
+      authScreen: document.getElementById("authScreen"),
+      mainScreen: document.getElementById("mainScreen"),
+      loginForm: document.getElementById("loginForm"),
+      registerForm: document.getElementById("registerForm"),
+      loginMobile: document.getElementById("loginMobile"),
+      loginPassword: document.getElementById("loginPassword"),
+      registerName: document.getElementById("registerName"),
+      registerShopName: document.getElementById("registerShopName"),
+      registerMobile: document.getElementById("registerMobile"),
+      registerAddress: document.getElementById("registerAddress"),
+      registerPassword: document.getElementById("registerPassword"),
+      shopNameHeader: document.getElementById("shopNameHeader"),
+      shopWelcomeText: document.getElementById("shopWelcomeText"),
+      activeUserPill: document.getElementById("activeUserPill"),
+      customerSearch: document.getElementById("customerSearch"),
+      dashboardCustomerList: document.getElementById("dashboardCustomerList"),
+      customerList: document.getElementById("customerList"),
+      customerName: document.getElementById("customerName"),
+      customerPhone: document.getElementById("customerPhone"),
+      customerAddress: document.getElementById("customerAddress"),
+      saveCustomerBtn: document.getElementById("saveCustomerBtn"),
+      resetCustomerBtn: document.getElementById("resetCustomerBtn"),
+      itemName: document.getElementById("itemName"),
+      itemPhoto: document.getElementById("itemPhoto"),
+      itemStock: document.getElementById("itemStock"),
+      itemPurchasePrice: document.getElementById("itemPurchasePrice"),
+      itemSalePrice: document.getElementById("itemSalePrice"),
+      saveItemBtn: document.getElementById("saveItemBtn"),
+      resetItemBtn: document.getElementById("resetItemBtn"),
+      itemList: document.getElementById("itemList"),
+      billCustomerSelect: document.getElementById("billCustomerSelect"),
+      billItemSelect: document.getElementById("billItemSelect"),
+      billQty: document.getElementById("billQty"),
+      billNote: document.getElementById("billNote"),
+      billPaidAmount: document.getElementById("billPaidAmount"),
+      billDate: document.getElementById("billDate"),
+      saveBillBtn: document.getElementById("saveBillBtn"),
+      cancelBillBtn: document.getElementById("cancelBillBtn"),
+      addBillItemBtn: document.getElementById("addBillItemBtn"),
+      billItemsContainer: document.getElementById("billItemsContainer"),
+      billSubtotal: document.getElementById("billSubtotal"),
+      billDue: document.getElementById("billDue"),
+      billList: document.getElementById("billList"),
+      billFormHeading: document.getElementById("billFormHeading"),
+      legacyLedgerBody: document.getElementById("legacyLedgerBody"),
+      totalSales: document.getElementById("totalSales"),
+      totalDues: document.getElementById("totalDues"),
+      customerCount: document.getElementById("customerCount"),
+      itemCount: document.getElementById("itemCount")
+    };
 
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      } catch (error) {
-        console.warn("Could not parse saved ledger entries.", error);
-      }
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultEntries));
-      return [...defaultEntries];
+    function uid(prefix = "id") {
+      return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
     }
 
-    let entries = loadEntries();
-
-    function persistEntries() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-    }
-
-    function formatCurrency(value) {
+    function money(value) {
       return new Intl.NumberFormat("en-IN", {
         style: "currency",
         currency: "INR",
         minimumFractionDigits: 2
-      }).format(value);
+      }).format(Number(value || 0));
     }
 
-    function calculateTotals() {
-      let totalCredit = 0;
-      let totalDebit = 0;
+    function parseJson(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch (error) {
+        console.warn("Could not parse localStorage key:", key, error);
+        return fallback;
+      }
+    }
 
-      entries.forEach(entry => {
-        if (entry.type === "credit") totalCredit += Number(entry.amount);
-        else totalDebit += Number(entry.amount);
+    function saveJson(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function defaultItems() {
+      return [
+        {
+          id: "item-rice-1",
+          name: "Rice Bag",
+          photo: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=900&q=80",
+          stock: 30,
+          purchasePrice: 42,
+          salePrice: 55,
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "item-sugar-1",
+          name: "Sugar",
+          photo: "https://images.unsplash.com/photo-1556189250-72ba954cfc2b?auto=format&fit=crop&w=900&q=80",
+          stock: 25,
+          purchasePrice: 38,
+          salePrice: 50,
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "item-milk-1",
+          name: "Milk Pack",
+          photo: "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=900&q=80",
+          stock: 18,
+          purchasePrice: 24,
+          salePrice: 34,
+          createdAt: new Date().toISOString()
+        }
+      ];
+    }
+
+    function defaultCustomers() {
+      return [
+        {
+          id: "cust-raj",
+          name: "Raj Verma",
+          mobile: "9876543210",
+          address: "Main Road, Bhopal",
+          createdAt: new Date().toISOString(),
+          transactions: [
+            { id: uid("tx"), date: "2026-10-01", type: "credit", description: "Opening balance", amount: 2500 },
+            { id: uid("tx"), date: "2026-10-03", type: "debit", description: "Payment received", amount: 700 },
+            { id: uid("tx"), date: "2026-10-08", type: "credit", description: "Rice supply", amount: 1400 }
+          ]
+        },
+        {
+          id: "cust-sonia",
+          name: "Sonia Patel",
+          mobile: "9123456780",
+          address: "Near City Garden",
+          createdAt: new Date().toISOString(),
+          transactions: [
+            { id: uid("tx"), date: "2026-10-02", type: "debit", description: "Payment", amount: 500 },
+            { id: uid("tx"), date: "2026-10-05", type: "credit", description: "Biscuit order", amount: 950 }
+          ]
+        }
+      ];
+    }
+
+    function defaultBills() {
+      return [
+        {
+          id: "bill-1",
+          billNumber: "INV-1001",
+          customerId: "cust-raj",
+          date: "2026-10-08",
+          note: "Delivery for store",
+          items: [
+            { id: "item-rice-1", name: "Rice Bag", qty: 2, price: 55, total: 110 }
+          ],
+          subtotal: 110,
+          paid: 0,
+          remaining: 110,
+          status: "unpaid",
+          createdAt: new Date().toISOString()
+        }
+      ];
+    }
+
+    function getProfile() {
+      const saved = parseJson(STORAGE_KEYS.profile, null);
+      if (saved && saved.mobile && saved.password) return saved;
+      return null;
+    }
+
+    function loadState() {
+      state.profile = getProfile();
+      state.customers = parseJson(STORAGE_KEYS.customers, defaultCustomers());
+      state.items = parseJson(STORAGE_KEYS.items, defaultItems());
+      state.bills = parseJson(STORAGE_KEYS.bills, defaultBills());
+      state.legacyEntries = parseJson(STORAGE_KEYS.legacy, []);
+      if (!state.profile) {
+        state.customers = parseJson(STORAGE_KEYS.customers, []);
+        state.items = parseJson(STORAGE_KEYS.items, []);
+        state.bills = parseJson(STORAGE_KEYS.bills, []);
+      }
+      ensureLegacyMigration();
+    }
+
+    function ensureLegacyMigration() {
+      const migrated = parseJson(STORAGE_KEYS.migration, false);
+      if (!migrated && Array.isArray(state.legacyEntries) && state.legacyEntries.length > 0) {
+        migrateLegacyEntries();
+        saveJson(STORAGE_KEYS.migration, true);
+      }
+
+      if (state.customers.length === 0 && Array.isArray(state.legacyEntries) && state.legacyEntries.length > 0) {
+        migrateLegacyEntries();
+      }
+    }
+
+    function migrateLegacyEntries() {
+      const existing = parseJson(STORAGE_KEYS.customers, []);
+      const customerMap = new Map();
+
+      existing.forEach(customer => {
+        customerMap.set(String(customer.name || "").toLowerCase(), customer);
       });
 
-      const netBalance = totalCredit - totalDebit;
-      document.getElementById("totalCredit").textContent = formatCurrency(totalCredit);
-      document.getElementById("totalDebit").textContent = formatCurrency(totalDebit);
-      document.getElementById("netBalance").textContent = formatCurrency(netBalance);
-      document.getElementById("currentBalance").textContent = formatCurrency(netBalance);
+      state.legacyEntries.forEach(entry => {
+        const safeName = (entry.name || "Unknown Customer").trim();
+        const key = safeName.toLowerCase();
+        let customer = customerMap.get(key);
+
+        if (!customer) {
+          customer = {
+            id: uid("cust"),
+            name: safeName,
+            mobile: "",
+            address: "",
+            createdAt: new Date().toISOString(),
+            transactions: []
+          };
+          customerMap.set(key, customer);
+          existing.push(customer);
+        }
+
+        customer.transactions.push({
+          id: uid("legacy"),
+          date: entry.date || new Date().toISOString().slice(0, 10),
+          type: entry.type === "credit" ? "credit" : "debit",
+          description: entry.particulars || "Legacy ledger transaction",
+          amount: Number(entry.amount || 0)
+        });
+      });
+
+      state.customers = existing;
+      saveJson(STORAGE_KEYS.customers, state.customers);
     }
 
-    function renderTable() {
-      ledgerBody.innerHTML = "";
+    function showAuthScreen() {
+      app.authScreen.classList.add("active");
+      app.mainScreen.classList.remove("active");
+    }
 
-      if (entries.length === 0) {
-        ledgerBody.innerHTML = '<tr><td colspan="6" class="empty">No entries yet.</td></tr>';
-        calculateTotals();
+    function showMainScreen() {
+      app.authScreen.classList.remove("active");
+      app.mainScreen.classList.add("active");
+      renderProfile();
+      renderAll();
+    }
+
+    function setActiveAuthTab(tabName) {
+      document.querySelectorAll(".auth-tab").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.authTab === tabName);
+      });
+
+      const loginVisible = tabName === "login";
+      app.loginForm.classList.toggle("hidden", !loginVisible);
+      app.registerForm.classList.toggle("hidden", loginVisible);
+    }
+
+    function renderProfile() {
+      if (!state.profile) return;
+      app.shopNameHeader.textContent = state.profile.shopName || "Nova Lite Solution";
+      app.shopWelcomeText.textContent = `Welcome, ${state.profile.name}`;
+      app.activeUserPill.textContent = state.profile.name;
+    }
+
+    function renderAll() {
+      renderDashboard();
+      renderCustomerList();
+      renderItemList();
+      renderBillList();
+      renderLegacyLedger();
+      populateCustomerSelect();
+      populateItemSelect();
+      updateDraftBillSummary();
+    }
+
+    function getCustomerSummary(customer) {
+      const totalCredit = (customer.transactions || []).reduce((sum, tx) => {
+        return sum + (tx.type === "credit" ? Number(tx.amount || 0) : 0);
+      }, 0);
+
+      const totalDebit = (customer.transactions || []).reduce((sum, tx) => {
+        return sum + (tx.type === "debit" ? Number(tx.amount || 0) : 0);
+      }, 0);
+
+      const outstanding = totalCredit - totalDebit;
+      return { totalCredit, totalDebit, outstanding };
+    }
+
+    function getBillCustomerById(customerId) {
+      return state.customers.find(customer => customer.id === customerId) || null;
+    }
+
+    function renderDashboard() {
+      const filteredCustomers = filterCustomers(app.customerSearch.value);
+      const totalSales = state.bills.reduce((sum, bill) => sum + Number(bill.total || bill.subtotal || 0), 0);
+      const totalDues = state.customers.reduce((sum, customer) => {
+        return sum + Math.max(0, getCustomerSummary(customer).outstanding);
+      }, 0);
+
+      app.totalSales.textContent = money(totalSales);
+      app.totalDues.textContent = money(totalDues);
+      app.customerCount.textContent = String(state.customers.length);
+      app.itemCount.textContent = String(state.items.length);
+
+      if (!filteredCustomers.length) {
+        app.dashboardCustomerList.innerHTML = '<div class="empty">No customers match your current search.</div>';
+        return;
+      }
+
+      app.dashboardCustomerList.innerHTML = filteredCustomers.map(customer => {
+        const summary = getCustomerSummary(customer);
+        return `
+          <div class="list-item" data-customer-id="${customer.id}">
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <div class="avatar" style="display:flex;align-items:center;justify-content:center;background:#e6fffb;color:var(--primary);font-weight:800;">${(customer.name || "N").charAt(0).toUpperCase()}</div>
+              <div>
+                <strong>${escapeHtml(customer.name || "Customer")}</strong>
+                <div class="meta">${escapeHtml(customer.mobile || "No mobile")}</div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div class="meta">Credit: ${money(summary.totalCredit)}</div>
+              <div class="meta">Debit: ${money(summary.totalDebit)}</div>
+              <div class="due-red">Outstanding: ${money(summary.outstanding)}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      app.dashboardCustomerList.querySelectorAll(".list-item").forEach(item => {
+        item.addEventListener("click", () => {
+          state.selectedCustomerId = item.dataset.customerId;
+          document.querySelector(".nav-btn[data-view='customers']").click();
+          renderCustomerList();
+        });
+      });
+    }
+
+    function renderCustomerList() {
+      const customers = [...state.customers].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+
+      if (!customers.length) {
+        app.customerList.innerHTML = '<div class="empty">No customers yet. Add your first customer.</div>';
+        return;
+      }
+
+      app.customerList.innerHTML = customers.map(customer => {
+        const summary = getCustomerSummary(customer);
+        const isSelected = state.selectedCustomerId === customer.id;
+        return `
+          <div class="list-item" data-customer-id="${customer.id}" style="border-color:${isSelected ? "#14b8a6" : "var(--border)"}; background:${isSelected ? "#f0fdfa" : "#fbfdff"};">
+            <div style="display:flex; gap: 12px; align-items: center; flex: 1;">
+              <div class="avatar" style="display:flex;align-items:center;justify-content:center;background:#edf7ff;color:var(--accent);font-weight:800;">${(customer.name || "N").charAt(0).toUpperCase()}</div>
+              <div>
+                <strong>${escapeHtml(customer.name || "Customer")}</strong>
+                <div class="meta">${escapeHtml(customer.mobile || "No mobile")}</div>
+                <div class="meta">${escapeHtml(customer.address || "No address")}</div>
+              </div>
+            </div>
+            <div style="text-align: right; min-width: 120px;">
+              <div class="meta">Credit: ${money(summary.totalCredit)}</div>
+              <div class="meta">Debit: ${money(summary.totalDebit)}</div>
+              <div class="due-red">Outstanding: ${money(summary.outstanding)}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      app.customerList.querySelectorAll(".list-item").forEach(item => {
+        item.addEventListener("click", () => {
+          const id = item.dataset.customerId;
+          const customer = state.customers.find(entry => entry.id === id);
+          if (!customer) return;
+          state.selectedCustomerId = id;
+          app.customerName.value = customer.name || "";
+          app.customerPhone.value = customer.mobile || "";
+          app.customerAddress.value = customer.address || "";
+          renderCustomerList();
+          renderCustomerTransactions(id);
+        });
+      });
+
+      if (state.selectedCustomerId) {
+        renderCustomerTransactions(state.selectedCustomerId);
+      } else if (customers[0]) {
+        state.selectedCustomerId = customers[0].id;
+        renderCustomerTransactions(customers[0].id);
+      }
+    }
+
+    function renderCustomerTransactions(customerId) {
+      const customer = state.customers.find(item => item.id === customerId);
+      if (!customer) return;
+
+      const summary = getCustomerSummary(customer);
+      const transactions = customer.transactions || [];
+
+      const panel = document.createElement("div");
+      panel.className = "panel";
+      panel.innerHTML = `
+        <h3>${escapeHtml(customer.name || "Customer")}</h3>
+        <div class="tiny">Credit: ${money(summary.totalCredit)} | Debit: ${money(summary.totalDebit)} | Outstanding: <span class="due-red">${money(summary.outstanding)}</span></div>
+        <div class="table-wrap" style="margin-top: 12px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${transactions.length ? transactions.map(tx => `
+                <tr>
+                  <td>${tx.date || "--"}</td>
+                  <td><span class="status ${tx.type === "credit" ? "paid" : "unpaid"}">${tx.type === "credit" ? "Credit" : "Debit"}</span></td>
+                  <td>${escapeHtml(tx.description || "Transaction")}</td>
+                  <td>${money(tx.amount || 0)}</td>
+                </tr>
+              `).join("") : '<tr><td colspan="4" class="empty">No transactions yet.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      const target = app.customerList.parentNode;
+      const existing = target.querySelector(".customer-detail-panel");
+      if (existing) existing.remove();
+      panel.classList.add("customer-detail-panel");
+      target.appendChild(panel);
+    }
+
+    function renderItemList() {
+      if (!state.items.length) {
+        app.itemList.innerHTML = '<div class="empty">No items yet. Add products to start billing.</div>';
+        return;
+      }
+
+      app.itemList.innerHTML = state.items.map(item => `
+        <div class="product-card">
+          <img src="${escapeAttribute(item.photo || "https://via.placeholder.com/200x150?text=No+Image")}" alt="${escapeAttribute(item.name || "Product")}" />
+          <div>
+            <strong>${escapeHtml(item.name || "Product")}</strong>
+            <div class="tiny">Stock: ${item.stock || 0}</div>
+            <div class="tiny">Purchase: ${money(item.purchasePrice || 0)}</div>
+            <div class="tiny">Sale: ${money(item.salePrice || 0)}</div>
+          </div>
+          <div class="row-actions">
+            <button class="btn warn small" data-edit-item="${item.id}">Edit</button>
+            <button class="btn danger small" data-delete-item="${item.id}">Delete</button>
+          </div>
+        </div>
+      `).join("");
+
+      app.itemList.querySelectorAll("[data-edit-item]").forEach(button => {
+        button.addEventListener("click", () => {
+          const item = state.items.find(entry => entry.id === button.dataset.editItem);
+          if (!item) return;
+          app.itemName.value = item.name || "";
+          app.itemStock.value = item.stock || 0;
+          app.itemPurchasePrice.value = item.purchasePrice || 0;
+          app.itemSalePrice.value = item.salePrice || 0;
+        });
+      });
+
+      app.itemList.querySelectorAll("[data-delete-item]").forEach(button => {
+        button.addEventListener("click", () => {
+          if (!confirm("Delete this item?")) return;
+          state.items = state.items.filter(item => item.id !== button.dataset.deleteItem);
+          saveJson(STORAGE_KEYS.items, state.items);
+          renderItemList();
+        });
+      });
+    }
+
+    function renderBillList() {
+      if (!state.bills.length) {
+        app.billList.innerHTML = '<div class="empty">No bills yet.</div>';
+        return;
+      }
+
+      app.billList.innerHTML = [...state.bills].sort((a, b) => new Date(b.date) - new Date(a.date)).map(bill => {
+        const customer = getBillCustomerById(bill.customerId);
+        const statusClass = bill.remaining > 0 ? "partial" : "paid";
+        const statusText = bill.remaining > 0 ? "Partial" : "Paid";
+        return `
+          <div class="list-item" style="display:block;">
+            <div style="display:flex; justify-content:space-between; gap:12px; align-items: center; flex-wrap: wrap;">
+              <div>
+                <strong>${escapeHtml(customer ? customer.name : "Customer")}</strong>
+                <div class="meta">Bill #${escapeHtml(String(bill.billNumber || bill.id))}</div>
+              </div>
+              <span class="status ${statusClass}">${statusText}</span>
+            </div>
+            <div class="meta" style="margin-top:10px;">Date: ${bill.date || "--"}</div>
+            <div class="meta">Total: ${money(bill.total || bill.subtotal || 0)} | Paid: ${money(bill.paid || 0)} | Due: <span class="due-red">${money(bill.remaining || 0)}</span></div>
+            <div class="row-actions">
+              <button class="btn secondary small" data-view-bill="${bill.id}">View</button>
+              <button class="btn warn small" data-edit-bill="${bill.id}">Edit</button>
+              <button class="btn danger small" data-delete-bill="${bill.id}">Delete</button>
+              <button class="btn primary small" data-share-bill="${bill.id}">Share</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      app.billList.querySelectorAll("[data-view-bill]").forEach(button => {
+        button.addEventListener("click", () => {
+          const bill = state.bills.find(entry => entry.id === button.dataset.viewBill);
+          if (!bill) return;
+          generatePrintableBill(bill, true);
+        });
+      });
+
+      app.billList.querySelectorAll("[data-edit-bill]").forEach(button => {
+        button.addEventListener("click", () => {
+          const bill = state.bills.find(entry => entry.id === button.dataset.editBill);
+          if (!bill) return;
+          openBillForEditing(bill);
+        });
+      });
+
+      app.billList.querySelectorAll("[data-delete-bill]").forEach(button => {
+        button.addEventListener("click", () => {
+          if (!confirm("Delete this bill?")) return;
+          state.bills = state.bills.filter(entry => entry.id !== button.dataset.deleteBill);
+          saveJson(STORAGE_KEYS.bills, state.bills);
+          renderBillList();
+        });
+      });
+
+      app.billList.querySelectorAll("[data-share-bill]").forEach(button => {
+        button.addEventListener("click", () => {
+          const bill = state.bills.find(entry => entry.id === button.dataset.shareBill);
+          if (!bill) return;
+          shareBillViaWhatsApp(bill);
+        });
+      });
+    }
+
+    function renderLegacyLedger() {
+      const entries = [...state.legacyEntries].sort((a, b) => new Date(b.date || Date.now()) - new Date(a.date || Date.now()));
+      if (!entries.length) {
+        app.legacyLedgerBody.innerHTML = '<tr><td colspan="6" class="empty">No legacy ledger entries found.</td></tr>';
         return;
       }
 
       let runningBalance = 0;
-
-      entries.forEach(entry => {
-        runningBalance += entry.type === "credit" ? Number(entry.amount) : -Number(entry.amount);
-
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${entry.date}</td>
-          <td>${entry.name}</td>
-          <td>${entry.particulars}</td>
-          <td><span class="status ${entry.type === "credit" ? "credit" : "debit"}">${entry.type === "credit" ? "Credit" : "Debit"}</span></td>
-          <td>${formatCurrency(Number(entry.amount))}</td>
-          <td>${formatCurrency(runningBalance)}</td>
+      app.legacyLedgerBody.innerHTML = entries.map(entry => {
+        runningBalance += entry.type === "credit" ? Number(entry.amount || 0) : -Number(entry.amount || 0);
+        return `
+          <tr>
+            <td>${entry.date || "--"}</td>
+            <td>${escapeHtml(entry.name || "Unknown")}</td>
+            <td>${escapeHtml(entry.particulars || "Transaction")}</td>
+            <td><span class="status ${entry.type === "credit" ? "paid" : "unpaid"}">${entry.type === "credit" ? "Credit" : "Debit"}</span></td>
+            <td>${money(entry.amount || 0)}</td>
+            <td>${money(runningBalance)}</td>
+          </tr>
         `;
-
-        ledgerBody.appendChild(row);
-      });
-
-      calculateTotals();
+      }).join("");
     }
 
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      const newEntry = {
-        date: document.getElementById("date").value,
-        name: document.getElementById("name").value.trim(),
-        particulars: document.getElementById("particulars").value.trim(),
-        type: document.getElementById("type").value,
-        amount: Number(document.getElementById("amount").value)
-      };
-
-      if (!newEntry.date || !newEntry.name || !newEntry.particulars || !newEntry.amount) {
-        alert("Please fill in all fields.");
+    function populateCustomerSelect() {
+      if (!state.customers.length) {
+        app.billCustomerSelect.innerHTML = '<option value="">No customers</option>';
         return;
       }
 
-      entries.unshift(newEntry);
-      persistEntries();
-      form.reset();
-      document.getElementById("date").valueAsDate = new Date();
-      renderTable();
-    });
+      app.billCustomerSelect.innerHTML = state.customers.map(customer => `
+        <option value="${customer.id}">${escapeHtml(customer.name || "Customer")}</option>
+      `).join("");
 
-    document.getElementById("date").valueAsDate = new Date();
-    renderTable();
+      if (!state.billCustomerSelect.value) {
+        app.billCustomerSelect.value = state.customers[0].id;
+      }
+    }
+
+    function populateItemSelect() {
+      if (!state.items.length) {
+        app.billItemSelect.innerHTML = '<option value="">No items</option>';
+        return;
+      }
+
+      app.billItemSelect.innerHTML = state.items.map(item => `
+        <option value="${item.id}">${escapeHtml(item.name || "Item")}</option>
+      `).join("");
+    }
+
+    function resetCustomerForm() {
+      app.customerName.value = "";
+      app.customerPhone.value = "";
+      app.customerAddress.value = "";
+      state.selectedCustomerId = null;
+      renderCustomerList();
+    }
+
+    function resetItemForm() {
+      app.itemName.value = "";
+      app.itemPhoto.value = "";
+      app.itemStock.value = 0;
+      app.itemPurchasePrice.value = 0;
+      app.itemSalePrice.value = 0;
+    }
+
+    function saveCustomer() {
+      const name = app.customerName.value.trim();
+      const mobile = app.customerPhone.value.trim();
+      const address = app.customerAddress.value.trim();
+
+      if (!name) {
+        alert("Customer name is required.");
+        return;
+      }
+
+      const customer = state.selectedCustomerId
+        ? state.customers.find(item => item.id === state.selectedCustomerId)
+        : null;
+
+      if (customer) {
+        customer.name = name;
+        customer.mobile = mobile;
+        customer.address = address;
+      } else {
+        state.customers.push({
+          id: uid("cust"),
+          name,
+          mobile,
+          address,
+          createdAt: new Date().toISOString(),
+          transactions: []
+        });
+      }
+
+      saveJson(STORAGE_KEYS.customers, state.customers);
+      renderCustomerList();
+      renderDashboard();
+      resetCustomerForm();
+    }
+
+    function saveItem() {
+      const itemName = app.itemName.value.trim();
+      const salePrice = Number(app.itemSalePrice.value || 0);
+      const purchasePrice = Number(app.itemPurchasePrice.value || 0);
+      const stock = Number(app.itemStock.value || 0);
+
+      if (!itemName) {
+        alert("Product name is required.");
+        return;
+      }
+
+      const file = app.itemPhoto.files && app.itemPhoto.files[0];
+      const photoData = file ? readAsDataURL(file) : null;
+
+      const existingIndex = state.items.findIndex(item => item.name.toLowerCase() === itemName.toLowerCase());
+
+      if (existingIndex >= 0) {
+        state.items[existingIndex] = {
+          ...state.items[existingIndex],
+          name: itemName,
+          stock,
+          purchasePrice,
+          salePrice,
+          photo: photoData || state.items[existingIndex].photo
+        };
+      } else {
+        state.items.push({
+          id: uid("item"),
+          name: itemName,
+          photo: photoData || "https://via.placeholder.com/200x150?text=Product",
+          stock,
+          purchasePrice,
+          salePrice,
+          createdAt: new Date().toISOString()
+        });
+      }
+
+      saveJson(STORAGE_KEYS.items, state.items);
+      renderItemList();
+      populateItemSelect();
+      resetItemForm();
+    }
+
+    function readAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error || new Error("File read error"));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function filterCustomers(value) {
+      const text = (value || "").trim().toLowerCase();
+      if (!text) return [...state.customers];
+      return state.customers.filter(customer => {
+        const name = (customer.name || "").toLowerCase();
+        const mobile = (customer.mobile || "").toLowerCase();
+        return name.includes(text) || mobile.includes(text);
+      });
+    }
+
+    function getDraftBillSubtotal() {
+      return state.draftBillItems.reduce((sum, item) => sum + Number(item.total || 0), 0);
+    }
+
+    function updateDraftBillSummary() {
+      const subtotal = getDraftBillSubtotal();
+      app.billSubtotal.textContent = money(subtotal);
+
+      const due = Math.max(0, subtotal - Number(app.billPaidAmount.value || 0));
+      app.billDue.textContent = money(due);
+      app.billDue.classList.toggle("due-red", due > 0);
+    }
+
+    function renderBillItems() {
+      if (!state.draftBillItems.length) {
+        app.billItemsContainer.innerHTML = '<div class="empty">No items added to this bill yet.</div>';
+        updateDraftBillSummary();
+        return;
+      }
+
+      app.billItemsContainer.innerHTML = state.draftBillItems.map((entry, index) => `
+        <div class="bill-item-row">
+          <div style="display:flex; justify-content:space-between; gap:12px;">
+            <strong>${escapeHtml(entry.name)}</strong>
+            <button class="btn danger small" data-remove-bill-item="${index}">Remove</button>
+          </div>
+          <div class="tiny">Qty: ${entry.qty} × ${money(entry.price)} = ${money(entry.total)}</div>
+        </div>
+      `).join("");
+
+      app.billItemsContainer.querySelectorAll("[data-remove-bill-item]").forEach(button => {
+        button.addEventListener("click", () => {
+          const index = Number(button.dataset.removeBillItem);
+          state.draftBillItems.splice(index, 1);
+          renderBillItems();
+        });
+      });
+
+      updateDraftBillSummary();
+    }
+
+    function addDraftBillItem() {
+      const selectedItemId = app.billItemSelect.value;
+      const qty = Number(app.billQty.value || 0);
+      if (!selectedItemId || qty <= 0) {
+        alert("Select a valid item and quantity.");
+        return;
+      }
+
+      const item = state.items.find(entry => entry.id === selectedItemId);
+      if (!item) {
+        alert("Selected item not found.");
+        return;
+      }
+
+      const total = Number(item.salePrice || 0) * qty;
+      state.draftBillItems.push({
+        itemId: item.id,
+        name: item.name,
+        qty,
+        price: Number(item.salePrice || 0),
+        total
+      });
+
+      renderBillItems();
+      app.billQty.value = 1;
+    }
+
+    function resetBillForm() {
+      state.draftBillItems = [];
+      state.editingBillId = null;
+      app.billFormHeading.textContent = "New Bill";
+      app.billNote.value = "";
+      app.billPaidAmount.value = 0;
+      app.billDate.value = new Date().toISOString().slice(0, 10);
+      renderBillItems();
+      app.saveBillBtn.textContent = "Save Bill";
+    }
+
+    function openBillForEditing(bill) {
+      state.editingBillId = bill.id;
+      app.billFormHeading.textContent = "Edit Bill";
+      app.billCustomerSelect.value = bill.customerId || state.customers[0]?.id || "";
+      state.draftBillItems = bill.items ? bill.items.map(item => ({
+        itemId: item.itemId,
+        name: item.name,
+        qty: item.qty,
+        price: item.price,
+        total: item.total
+      })) : [];
+      app.billNote.value = bill.note || "";
+      app.billPaidAmount.value = bill.paid || 0;
+      app.billDate.value = bill.date || new Date().toISOString().slice(0, 10);
+      app.saveBillBtn.textContent = "Update Bill";
+      renderBillItems();
+    }
+
+    function saveBill() {
+      const customerId = app.billCustomerSelect.value;
+      const customer = getBillCustomerById(customerId);
+      const date = app.billDate.value || new Date().toISOString().slice(0, 10);
+
+      if (!customer) {
+        alert("Please select a customer.");
+        return;
+      }
+
+      if (!state.draftBillItems.length) {
+        alert("Add at least one item before saving the bill.");
+        return;
+      }
+
+      const subtotal = state.draftBillItems.reduce((sum, item) => sum + Number(item.total || 0), 0);
+      const paid = Number(app.billPaidAmount.value || 0);
+      const remaining = Math.max(0, subtotal - paid);
+
+      const billPayload = {
+        id: state.editingBillId || uid("bill"),
+        billNumber: state.editingBillId ? (state.bills.find(item => item.id === state.editingBillId)?.billNumber || `INV-${Date.now()}`) : `INV-${Date.now()}`,
+        customerId,
+        date,
+        note: app.billNote.value.trim(),
+        items: state.draftBillItems.map(item => ({
+          itemId: item.itemId,
+          name: item.name,
+          qty: item.qty,
+          price: item.price,
+          total: item.total
+        })),
+        subtotal,
+        total: subtotal,
+        paid,
+        remaining,
+        status: remaining > 0 ? "partial" : "paid",
+        createdAt: new Date().toISOString()
+      };
+
+      const existingIndex = state.bills.findIndex(entry => entry.id === billPayload.id);
+      if (existingIndex >= 0) {
+        state.bills[existingIndex] = billPayload;
+      } else {
+        state.bills.push(billPayload);
+      }
+
+      saveJson(STORAGE_KEYS.bills, state.bills);
+
+      const customerIndex = state.customers.findIndex(entry => entry.id === customerId);
+      if (customerIndex >= 0) {
+        const customer = state.customers[customerIndex];
+        customer.transactions = customer.transactions || [];
+
+        const invoiceTx = {
+          id: uid("tx"),
+          date,
+          type: "credit",
+          description: `Bill ${billPayload.billNumber}`,
+          amount: subtotal
+        };
+
+        const paymentTx = {
+          id: uid("tx"),
+          date,
+          type: "debit",
+          description: `Payment received for ${billPayload.billNumber}`,
+          amount: paid
+        };
+
+        const existingBillTransactions = customer.transactions.filter(tx => tx.description !== `Bill ${billPayload.billNumber}` && tx.description !== `Payment received for ${billPayload.billNumber}`);
+        customer.transactions = [...existingBillTransactions, invoiceTx, ...(paid > 0 ? [paymentTx] : [])];
+      }
+
+      saveJson(STORAGE_KEYS.customers, state.customers);
+      renderAll();
+      resetBillForm();
+    }
+
+    function generatePrintableBill(bill, previewOnly = false) {
+      const customer = getBillCustomerById(bill.customerId);
+      const html = `
+        <html>
+          <head>
+            <title>Bill ${bill.billNumber}</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 30px; color: #1f2937; }
+              .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+              h1 { margin: 0; font-size: 28px; }
+              table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+              th, td { border: 1px solid #dfe7f1; padding: 10px; text-align: left; }
+              .totals { margin-top: 20px; text-align: right; }
+              .row { display: flex; justify-content: space-between; margin: 8px 0; }
+              .red { color: #dc2626; font-weight: bold; }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <div>
+                <h1>Nova Lite Solution</h1>
+                <p>${escapeHtml(state.profile?.shopName || "Nova Lite Solution")}</p>
+              </div>
+              <div>
+                <strong>Bill #${escapeHtml(String(bill.billNumber || bill.id))}</strong><br>
+                Date: ${bill.date || "--"}
+              </div>
+            </div>
+            <div>
+              <strong>Customer:</strong> ${escapeHtml(customer ? customer.name : "Customer")}<br>
+              <strong>Mobile:</strong> ${escapeHtml(customer ? customer.mobile : "-")}<br>
+              <strong>Address:</strong> ${escapeHtml(customer ? customer.address : "-")}
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th>Rate</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${bill.items.map(item => `
+                  <tr>
+                    <td>${escapeHtml(item.name)}</td>
+                    <td>${item.qty}</td>
+                    <td>${money(item.price)}</td>
+                    <td>${money(item.total)}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+            <div class="totals">
+              <div class="row"><span>Subtotal</span><span>${money(bill.subtotal || 0)}</span></div>
+              <div class="row"><span>Paid</span><span>${money(bill.paid || 0)}</span></div>
+              <div class="row"><span class="red">Remaining</span><span class="red">${money(bill.remaining || 0)}</span></div>
+            </div>
+          </body>
+        </html>
+      `;
+
+      if (previewOnly) {
+        const printWindow = window.open("", "_blank", "width=900,height=700");
+        if (printWindow) {
+          printWindow.document.write(html);
+          printWindow.document.close();
+          printWindow.focus();
+          setTimeout(() => printWindow.print(), 500);
+        }
+        return;
+      }
+
+      return html;
+    }
+
+    function shareBillViaWhatsApp(bill) {
+      const customer = getBillCustomerById(bill.customerId);
+      const text = `Nova Lite Solution Invoice\nCustomer: ${customer ? customer.name : "Customer"}\nBill #: ${bill.billNumber || bill.id}\nTotal: ${money(bill.total || bill.subtotal || 0)}\nPaid: ${money(bill.paid || 0)}\nRemaining: ${money(bill.remaining || 0)}`;
+      const encodedText = encodeURIComponent(text);
+      window.open(`https://wa.me/?text=${encodedText}`, "_blank");
+
+      const printHtml = generatePrintableBill(bill, false);
+      if (printHtml) {
+        const newWindow = window.open("", "_blank", "width=900,height=700");
+        if (newWindow) {
+          newWindow.document.write(printHtml);
+          newWindow.document.close();
+          newWindow.focus();
+        }
+      }
+    }
+
+    function setupEvents() {
+      document.querySelectorAll(".auth-tab").forEach(button => {
+        button.addEventListener("click", () => setActiveAuthTab(button.dataset.authTab));
+      });
+
+      app.loginForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const mobile = app.loginMobile.value.trim();
+        const password = app.loginPassword.value.trim();
+
+        if (!state.profile || !state.profile.mobile || !state.profile.password) {
+          alert("No account found. Please register first.");
+          return;
+        }
+
+        if (state.profile.mobile === mobile && state.profile.password === password) {
+          showMainScreen();
+        } else {
+          alert("Invalid mobile number or password.");
+        }
+      });
+
+      app.registerForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const name = app.registerName.value.trim();
+        const shopName = app.registerShopName.value.trim();
+        const mobile = app.registerMobile.value.trim();
+        const address = app.registerAddress.value.trim();
+        const password = app.registerPassword.value.trim();
+
+        if (!name || !shopName || !mobile || !address || !password) {
+          alert("Please fill in all registration fields.");
+          return;
+        }
+
+        const nextProfile = { name, shopName, mobile, address, password };
+        state.profile = nextProfile;
+        saveJson(STORAGE_KEYS.profile, nextProfile);
+        showMainScreen();
+      });
+
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEYS.profile);
+        state.profile = null;
+        app.loginMobile.value = "";
+        app.loginPassword.value = "";
+        app.registerName.value = "";
+        app.registerShopName.value = "";
+        app.registerMobile.value = "";
+        app.registerAddress.value = "";
+        app.registerPassword.value = "";
+        showAuthScreen();
+      });
+
+      document.querySelectorAll(".nav-btn").forEach(button => {
+        button.addEventListener("click", () => {
+          const view = button.dataset.view;
+          state.currentView = view;
+          document.querySelectorAll(".nav-btn").forEach(item => item.classList.toggle("active", item.dataset.view === view));
+          document.querySelectorAll(".view").forEach(item => item.classList.toggle("active", item.id === `${view}View`));
+        });
+      });
+
+      app.customerSearch.addEventListener("input", renderDashboard);
+      app.saveCustomerBtn.addEventListener("click", saveCustomer);
+      app.resetCustomerBtn.addEventListener("click", resetCustomerForm);
+      app.saveItemBtn.addEventListener("click", saveItem);
+      app.resetItemBtn.addEventListener("click", resetItemForm);
+      app.addBillItemBtn.addEventListener("click", addDraftBillItem);
+      app.saveBillBtn.addEventListener("click", saveBill);
+      app.cancelBillBtn.addEventListener("click", resetBillForm);
+      app.billPaidAmount.addEventListener("input", updateDraftBillSummary);
+      app.billItemSelect.addEventListener("change", updateDraftBillSummary);
+      app.billCustomerSelect.addEventListener("change", () => {
+        if (!state.editingBillId) return;
+      });
+    }
+
+    function init() {
+      loadState();
+      setupEvents();
+
+      if (state.profile) {
+        showMainScreen();
+      } else {
+        showAuthScreen();
+      }
+
+      app.billDate.value = new Date().toISOString().slice(0, 10);
+      resetBillForm();
+      renderDashboard();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttribute(value) {
+      return escapeHtml(value);
+    }
+
+    init();
   </script>
 </body>
 </html>
