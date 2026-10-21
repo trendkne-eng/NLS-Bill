@@ -1,0 +1,16 @@
+{
+  "name": "nls-khatabook",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:web": "mkdir -p public && cp index.html public/index.html",
+    "sync:android": "npx cap sync android",
+    "open:android": "npx cap open android",
+    "android:release": "npx cap sync android && cd android && gradle assembleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.0.1",
+    "@capacitor/cli": "^7.0.1",
+    "@capacitor/core": "^7.0.1"
+  }
+}
